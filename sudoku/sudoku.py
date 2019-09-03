@@ -1,4 +1,4 @@
-sudoku_matrix = [
+sudoku_matrix = [  # 0 - means empty cell
     # 1  2  3  4  5  6  7  8  9
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
@@ -37,6 +37,7 @@ def get_quadrant_options(matrix, row, col):
         for item in row:
             if item in numbers:
                 numbers.pop(numbers.index(item))
+    return numbers
 
 
 def get_row_options(matrix, row):
@@ -71,4 +72,8 @@ def intersected_items(*args):
 
 
 def check_sudoku(matrix, row, col):
-    pass
+    row_opts  = get_row_options(matrix, row)
+    col_opts  = get_col_options(matrix, col)
+    quad_opts = get_quadrant_options(matrix, row, col)
+    opts      = intersected_items(row_opts, col_opts, quad_opts)
+
