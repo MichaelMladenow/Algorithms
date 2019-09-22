@@ -88,7 +88,6 @@ def find_next_empty_cell(matrix, row, col):
         
 
 def print_matrix(matrix):
-    print("-"*(len(matrix[0])+4))
     for ix,x in enumerate(matrix):
         if not (ix % 3):
             print("-"*(len(x)+4))
