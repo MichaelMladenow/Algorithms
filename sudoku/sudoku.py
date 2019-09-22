@@ -15,7 +15,7 @@ sudoku_matrix = [  # 0 - means empty cell
 
 qwidth  = 3               # Quadrant Width
 qheight = 3               # Quadrant Height
-nums    = list(range(9))  # Possible Numbers
+nums    = list(range(1,10))  # Possible Numbers
 
 
 def get_quadrant(matrix, row, col):
@@ -71,23 +71,19 @@ def intersected_items(*args):
     return intersection
 
 
-def find_next_empty_cell(matrix, row, col):
-    first_run = True
-    row_range = range(row+1, len(matrix))
-    for x in row_range:
-        if first_run:
-            first_run = False
-            col_start = col + 1
-        else:
-            col_start = 0
-        col_range = range(col_start, row_range[-1])
-        for y in col_range:
-            if y != 0:
-                return (x, y)
-    return -1
-        
+def find_next_empty_cell(matrix):
+    """Returns the index of the first cell with
+    a values of zero from the 2D matrix."""
+    for row in range(9): 
+        for col in range(9): 
+            if(matrix[row][col]==0):
+                return (row, col)
+    return False
+
 
 def print_matrix(matrix):
+    """Renders the matrix to the console, using
+    dividers to separate quadrants."""
     for ix,x in enumerate(matrix):
         if not (ix % 3):
             print("-"*(len(x)+4))
@@ -98,29 +94,38 @@ def print_matrix(matrix):
             out_line.append(str(y))
         out_line.append("|")
         print("".join(out_line))
-    print("-"*(len(matrix[0])+4))
-        
+    print("-"*(len(matrix[0])+4))   
 
 
-def check_sudoku(matrix, row, col):
-    val                = matrix[row][col]
-    row_opts           = get_row_options(matrix, row)
-    col_opts           = get_col_options(matrix, col)
-    quad_opts          = get_quadrant_options(matrix, row, col)
-    opts               = intersected_items(row_opts, col_opts, quad_opts)
-    next_cell          = find_next_empty_cell(matrix, row, col)
+def get_valid_opts(matrix, row, col):
+    """Get the valid options for a cell in a
+    sudoku matrix."""
+    row_opts  = get_row_options(matrix, row)
+    col_opts  = get_col_options(matrix, col)
+    quad_opts = get_quadrant_options(matrix, row, col)
+    return intersected_items(row_opts, col_opts, quad_opts)
+
+
+def check_sudoku(matrix):
+    next_cell = find_next_empty_cell(matrix)
     
-    if next_cell == -1:
-        print("Exhausted matrix")
-        print_matrix(matrix)
-    else:
-        next_row, next_col = next_cell
-        for opt in opts:
-            tmp_matrix = matrix[:]
-            tmp_matrix[row][col] = opt
-            check_sudoku(tmp_matrix, next_row, next_col)
+    if not next_cell:
+        return True
+
+    row,col = next_cell
+    opts    = get_valid_opts(matrix, row, col)
+    for opt in opts:
+        matrix[row][col] = opt
+        if check_sudoku(matrix):
+            return True
+        matrix[row][col] = 0
+
+    return False
         
     
-check_sudoku(sudoku_matrix, 0, 0)    
+if check_sudoku(sudoku_matrix):
+    print_matrix(sudoku_matrix)
+else:
+    print("Can't find a solution")
     
 
