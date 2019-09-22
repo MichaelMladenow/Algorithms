@@ -71,9 +71,57 @@ def intersected_items(*args):
     return intersection
 
 
+def find_next_empty_cell(matrix, row, col):
+    first_run = True
+    row_range = range(row+1, len(matrix))
+    for x in row_range:
+        if first_run:
+            first_run = False
+            col_start = col + 1
+        else:
+            col_start = 0
+        col_range = range(col_start, row_range[-1])
+        for y in col_range:
+            if y != 0:
+                return (x, y)
+    return -1
+        
+
+def print_matrix(matrix):
+    print("-"*(len(matrix[0])+4))
+    for ix,x in enumerate(matrix):
+        if not (ix % 3):
+            print("-"*(len(x)+4))
+        out_line = []
+        for iy,y in enumerate(x):
+            if (iy == 0) or (iy == len(x)) or not (iy % 3):
+                out_line.append("|")
+            out_line.append(str(y))
+        out_line.append("|")
+        print("".join(out_line))
+    print("-"*(len(matrix[0])+4))
+        
+
+
 def check_sudoku(matrix, row, col):
-    row_opts  = get_row_options(matrix, row)
-    col_opts  = get_col_options(matrix, col)
-    quad_opts = get_quadrant_options(matrix, row, col)
-    opts      = intersected_items(row_opts, col_opts, quad_opts)
+    val                = matrix[row][col]
+    row_opts           = get_row_options(matrix, row)
+    col_opts           = get_col_options(matrix, col)
+    quad_opts          = get_quadrant_options(matrix, row, col)
+    opts               = intersected_items(row_opts, col_opts, quad_opts)
+    next_cell          = find_next_empty_cell(matrix, row, col)
+    
+    if next_cell == -1:
+        print("Exhausted matrix")
+        print_matrix(matrix)
+    else:
+        next_row, next_col = next_cell
+        for opt in opts:
+            tmp_matrix = matrix[:]
+            tmp_matrix[row][col] = opt
+            check_sudoku(tmp_matrix, next_row, next_col)
+        
+    
+check_sudoku(sudoku_matrix, 0, 0)    
+    
 
