@@ -1,20 +1,10 @@
-sudoku_matrix = [  # 0 - means empty cell
-    # 1  2  3  4  5  6  7  8  9
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
-
+"""
+    Some settings below.
+"""
 qwidth  = 3                   # Quadrant Width
 qheight = 3                   # Quadrant Height
+row_len = 9                   # Row size
+col_len = 9                   # Col size
 nums    = list(range(1, 10))  # Possible Numbers
 
 
@@ -71,11 +61,8 @@ def get_row_options(matrix, row):
     Returns:
         list<int>: List of number 1-9 that are unoccupied in this row.
     """
-    numbers = nums[:]
-    for item in matrix[row]:
-        if item in numbers:
-            numbers.pop(numbers.index(item))
-    return numbers
+    return [num for num in nums \
+            if num not in matrix[row]]
 
 
 def get_col_options(matrix, col):
@@ -121,12 +108,12 @@ def find_next_empty_cell(matrix):
 
     Returns:
         list<int>[2]: [row_index, col_index] of the first free cell found.
-        -1: There's no empty space in the matrix.
+        bool False: There's no empty space in the matrix.
     """
-    for row in range(9): 
-        for col in range(9): 
-            if(matrix[row][col]==0):
-                return (row, col)
+    for row in range(row_len):
+        for col in range(col_len):
+            if matrix[row][col] == 0:
+                return row, col
     return False
 
 
@@ -139,17 +126,18 @@ def print_matrix(matrix):
         Returns:
             void
         """
-    for ix, x in enumerate(matrix):
-        if not (ix % 3):
-            print("-"*(len(x)+4))
+    row_padding = row_len // qwidth + 1
+    for row in range(row_len):
+        if not (row % qheight):
+            print("-" * (row_len + row_padding))
         out_line = []
-        for iy, y in enumerate(x):
-            if (iy == 0) or (iy == len(x)) or not (iy % 3):
+        for col in range(col_len):
+            if not (col % qwidth):
                 out_line.append("|")
-            out_line.append(str(y))
+            out_line.append(str(matrix[row][col]))
         out_line.append("|")
         print("".join(out_line))
-    print("-"*(len(matrix[0])+4))   
+    print("-" * (row_len + row_padding))
 
 
 def get_valid_opts(matrix, row, col):
@@ -208,15 +196,30 @@ def check_sudoku(matrix):
             return True
 
         # In case the predicted value cannot yield a solution
-        # clear the prediction
+        # clear the prediction matrix backwards until we have another
+        # option to test.
         matrix[row][col] = 0
 
     return False
-        
-    
-if check_sudoku(sudoku_matrix):
-    print_matrix(sudoku_matrix)
-else:
-    print("Can't find a solution")
-    
 
+
+if __name__ == "__main__":
+    sudoku_matrix = [  # 0 - means empty cell
+        # 1  2  3  4  5  6  7  8  9
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9],
+    ]
+
+    if check_sudoku(sudoku_matrix):
+        print_matrix(sudoku_matrix)
+    else:
+        print("Can't find a solution")
