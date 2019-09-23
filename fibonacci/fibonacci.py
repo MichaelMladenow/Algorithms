@@ -25,15 +25,37 @@ def memoized(func):
 
 
 def fib_recursive(n):
+    """A recursive way to calculate the nth fibonacci's number.
+
+    Args:
+         int n: The fibonacci number to be calculated
+    Return:
+        int: The nth fibonacci number
+    """
     return 1 if n <= 2 else fib_recursive(n-1) + fib_recursive(n-2)
 
 
 @memoized
 def fib_recursive_memo(n):
+    """A recursive way to calculate the nth fibonacci's number
+    utilizing memoization to avoid duplicate calculations.
+
+    Args:
+         int n: The fibonacci number to be calculated
+    Returns:
+        int: The nth fibonacci number
+    """
     return 1 if n <= 2 else fib_recursive_memo(n-1) + fib_recursive_memo(n-2)
 
 
 def fib_iterative(n):
+    """An iterative way to calculate the nth fibonacci's number.
+
+    Args:
+         int n: The fibonacci number to be calculated
+    Returns:
+        int: The nth fibonacci number
+    """
     nums = [None] * n
     for num in range(n):
         nums[num] = 1 if num <= 1 else nums[num-1] + nums[num-2]
@@ -41,6 +63,15 @@ def fib_iterative(n):
 
 
 def fib_dynamic(n):
+    """An iterative way to calculate the nth fibonacci's number.
+    Also reduces stored variables to a minimum in order to minimize
+    space complexity.
+
+    Args:
+         int n: The fibonacci number to be calculated
+    Returns:
+        int: The nth fibonacci number
+    """
     nums = [1, 1]
     for num in range(n-2):
         new_num = sum(nums)
@@ -51,6 +82,25 @@ def fib_dynamic(n):
 
 @timed
 def fibonacci(n, method="recursive"):
+    """A helper method, used to dispatch fibonaci number calculations
+    to different calculation methods while tracking execution time.
+
+    Args:
+         int n: The fibonacci number to be calculated
+         str method:
+            - recursive: Simple recursive solution, incurs duplicate
+            calculations.
+            - memoization: Advanced recursive solution, stores results
+            in order to avoid dulicate calculations. Much more efficient
+            than the simple recursive method.
+            - iterative: Simple iterative solution, does not incur
+            duplicate calculations.
+            - dynamic: Advanced iterative solution, does not incur duplicate
+             calculations. Also reduces the stored variables to a minimum,
+             resulting in a smaller memory fingerprint.
+    Returns:
+        int: The nth fibonacci number
+    """
     if method == "recursive":
         return fib_recursive(n)
     elif method == "memoization":
